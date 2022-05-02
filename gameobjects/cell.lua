@@ -8,27 +8,56 @@ Colors = {
              love.math.colorFromBytes(255, 222, 56)}
 }
 
-function Cell:new(enemy, health, player, position)
-    local health = type.health
-    if enemy then
-        local color = Colors.ENEMY[enemy]
-    else
-        local color = Colors.PLAYER
+function Cell:new(enemy, health, ownerPlayer, position)
+    self.health = health
+    -- if enemy == true then
+    --     self.color = Colors.ENEMY[enemy]
+    -- else
+    --     self.color = Colors.PLAYER
+    -- end
+    if not enemy then
+        enemy = ""
     end
+    self.enemy_idx =enemy
+    self.gfx = love.graphics.newImage('assets/cell_' .. tostring(enemy) .. '.png', {})
+    print(type(self.position))
+    self.position = position
+    self.owner = ownerPlayer
+end
 
-    image = love.graphics.newImage('assets/cell.png')
-
-    local position = {x=position.x, y=position.y}
-    local player = player
+function Cell:connect(enemy_cell, is_origin)
+    if self.enemy_idx == enemy_cell.enemy_idx then
+        return false
+    end
+    if enemy_cell == self.owner then
+        return false
+    end
+    self.connected_to = enemy_cell
+    self.connected_origin = is_origin
+    return true
 end
 
 function Cell:update(dt)
 end
 
 function Cell:playerTakeover(newPlayer)
-    player=newPlayer
+    self.player = newPlayer
 end
 
 function Cell:draw()
     
+    love.graphics.draw(self.gfx, self.position.x, self.position.y)
+end
+
+function Cell:draw_connections()
+    love.graphics.setLineWidth(2)
+    if self.connected_to and self.connected_origin then
+        -- print("ELOO")
+        -- print(self.connected_to)
+        love.graphics.setColor(1,0,0)
+        -- print(self.position.x, self.position.y, self.connected_to.position.x, self.connected_to.position.y)
+        love.graphics.line(self.position.x, self.position.y, self.connected_to.position.x, self.connected_to.position.y)
+        love.graphics.line(10,10, 100, 100)
+        love.graphics.setColor(1,1,1)
+    end
 end
