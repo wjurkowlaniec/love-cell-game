@@ -9,6 +9,7 @@ Colors = {
 }
 
 function Cell:new(enemy, health, ownerPlayer, position)
+    self.id = love.math.random(10000000, 90000000)
     self.health = health
     -- if enemy == true then
     --     self.color = Colors.ENEMY[enemy]
@@ -20,9 +21,12 @@ function Cell:new(enemy, health, ownerPlayer, position)
     end
     self.enemy_idx =enemy
     self.gfx = love.graphics.newImage('assets/cell_' .. tostring(enemy) .. '.png', {})
-    print(type(self.position))
     self.position = position
     self.owner = ownerPlayer
+end
+
+function Cell:isEqual(cell)
+    return self.id == cell.id
 end
 
 function Cell:connect(enemy_cell, is_origin)
@@ -46,7 +50,7 @@ end
 
 function Cell:draw()
     
-    love.graphics.draw(self.gfx, self.position.x, self.position.y)
+    love.graphics.draw(self.gfx, self.position.x-(CELL_IMG_WIDTH/2), self.position.y-((CELL_IMG_HEIGHT/2)))
 end
 
 function Cell:draw_connections()
@@ -57,7 +61,6 @@ function Cell:draw_connections()
         love.graphics.setColor(1,0,0)
         -- print(self.position.x, self.position.y, self.connected_to.position.x, self.connected_to.position.y)
         love.graphics.line(self.position.x, self.position.y, self.connected_to.position.x, self.connected_to.position.y)
-        love.graphics.line(10,10, 100, 100)
         love.graphics.setColor(1,1,1)
     end
 end

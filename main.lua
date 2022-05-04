@@ -3,6 +3,7 @@ require "lib/utils"
 local pprint = require("lib/pprint")
 require "gameobjects.cell"
 require "gameobjects.player"
+require "mousesupport"
 
 function GetRandomPosition()
     ret = {
@@ -15,7 +16,7 @@ end
 function love.load()
     local object_files = {}
     recursiveEnumerate('gameobjects', object_files)
-    print(table.concat(object_files, ","))
+    -- print(table.concat(object_files, ","))
     requireFiles(object_files)
 end
 
@@ -25,11 +26,8 @@ GPlayer = Player(false)
 
 function GenerateRandomConnections()
     local prev_v
-    for i,v in ipairs(GCells) do
-        if prev_v  then
-            print("Connect from ")
-            pprint.pprint(prev_v)
-            print("Connect to ")
+    for i, v in ipairs(GCells) do
+        if prev_v then
 
             v:connect(prev_v, true)
         end
@@ -38,21 +36,25 @@ function GenerateRandomConnections()
 end
 
 function GenerateGameObjects()
-    local enemyCount = 2
+    local enemyCount = 1
     local cells_per_player = 3
     for enemy_idx = 1, enemyCount do
         local enemy = Player(true)
+
+        print("Enemy", enemy_idx, enemy.id)
         table.insert(GEnemies, enemy)
         for cell_idx = 0, cells_per_player do
             local insert = Cell(enemy_idx, love.math.random(10, 100), enemy, GetRandomPosition())
-            GCells[#GCells+1] = insert
-            -- table.insert(GCells, insert )
-            
+            GCells[#GCells + 1] = insert
+            enemy.cells[#enemy.cells + 1] = insert
+            print(#enemy.cells)
         end
     end
-    for cell_idx = #GCells, cells_per_player do
-        GCells[#GCells+1] = Cell(false, love.math.random(10, 100), Player, GetRandomPosition())
-        -- table.insert(GCells, cell_idx)
+    print("Player ID", GPlayer.id)
+    for cell_idx = #GCells, cells_per_player + #GCells do
+        local insert = Cell(false, love.math.random(10, 100), Player, GetRandomPosition())
+        GCells[#GCells + 1] = insert
+        GPlayer.cells[#GPlayer.cells + 1] = insert
     end
     GenerateRandomConnections()
 end
@@ -76,7 +78,7 @@ function love.update(dt)
     --     image_position.y = 0
     -- end
     -- -- print(1/dt)
-    
+
 end
 
 function love.draw()
@@ -96,6 +98,7 @@ function love.draw()
         -- GCells[i]:draw()
         v:draw()
     end
+    drawMouse()
 end
 
 function love.run()
