@@ -38,13 +38,13 @@ end
 function GenerateGameObjects()
     local enemyCount = 1
     local cells_per_player = 3
-    for enemy_idx = 1, enemyCount do
+    for enemyIdx = 1, enemyCount do
         local enemy = Player(true)
 
-        print("Enemy", enemy_idx, enemy.id)
+        print("Enemy", enemyIdx, enemy.id)
         table.insert(GEnemies, enemy)
         for cell_idx = 0, cells_per_player do
-            local insert = Cell(enemy_idx, love.math.random(10, 100), enemy, GetRandomPosition())
+            local insert = Cell(enemyIdx, love.math.random(10, 100), enemy, GetRandomPosition())
             GCells[#GCells + 1] = insert
             enemy.cells[#enemy.cells + 1] = insert
             print(#enemy.cells)
@@ -59,14 +59,11 @@ function GenerateGameObjects()
     GenerateRandomConnections()
 end
 
+
 function love.graphics.getBackgroundColor()
-    return 0.5, 1, 0.5, 1
+    return BgColor.R, BgColor.G, BgColor.B    
 end
 
-image_position = {
-    x = 0,
-    y = 0
-}
 
 function love.update(dt)
     -- image_position.x = image_position.x + 1
@@ -78,24 +75,16 @@ function love.update(dt)
     --     image_position.y = 0
     -- end
     -- -- print(1/dt)
-
+    for i, v in ipairs(GCells) do
+        v:update()
+    end
 end
 
 function love.draw()
-    -- pprint.pprint(GCells)
-    -- for i = 0, #GCells do
     for i, v in ipairs(GCells) do
-        -- pprint.pprint(GCells[i])
-        -- print(type(GCells[i]))
-        -- print(GCells[i]:is(Cell))
-        -- GCells[i]:draw()
         v:draw_connections()
     end
     for i, v in ipairs(GCells) do
-        -- pprint.pprint(GCells[i])
-        -- print(type(GCells[i]))
-        -- print(GCells[i]:is(Cell))
-        -- GCells[i]:draw()
         v:draw()
     end
     drawMouse()

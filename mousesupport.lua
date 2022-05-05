@@ -46,16 +46,20 @@ end
 
 function drawMouse()
     if love.mouse.isDown(1) then
-        love.graphics.setColor(0.5, 0, 5, 1)
+        love.graphics.setColor(PlayerLineColor)
         love.graphics.line(MouseClickPosition.x, MouseClickPosition.y, MousePosition.x, MousePosition.y)
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(DefaultColor)
     end
+end
+
+function lineIntersects(startX, startY, endX, endY)
+
 end
 
 function getClickedCell(x, y)
     for i, v in ipairs(GCells) do
         if CheckCircularCollision(x, y, v.position.x, v.position.y, CELL_RADIUS) then
-            print(v.position.x, v.position.y, v.enemy_idx)
+            print(v.position.x, v.position.y, v.enemyIdx)
             print("FOUND CELL ID ", v.id)
             return v
         end
